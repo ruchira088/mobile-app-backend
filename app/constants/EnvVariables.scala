@@ -7,4 +7,6 @@ object EnvVariables
   val SMS_TYPE = "SMS_TYPE"
 
   val SMS_MAX_PRICE = "SMS_MAX_PRICE"
+
+  val AIRTABLE_SERVICE_URL = "AIRTABLE_SERVICE_URL"
 }

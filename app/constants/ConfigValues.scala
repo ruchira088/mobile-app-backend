@@ -7,4 +7,6 @@ object ConfigValues
   val DEFAULT_SMS_TYPE = "Transactional"
 
   val DEFAULT_SMS_MAX_PRICE = "0.50"
+
+  val AIRTABLE_FIND_STYLIST_PATH = "find"
 }
