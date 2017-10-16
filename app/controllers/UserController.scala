@@ -2,17 +2,21 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import controllers.request.body.AuthenticateUser
+import controllers.request.body.{AuthenticateUser, RegisterUser}
 import controllers.response.AuthenticateResult
 import play.api.libs.json.JsValue
 import play.api.mvc._
+import services.SmsService
 import utils.ControllerUtils.deserialize
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserController @Inject()(parser: PlayBodyParsers, controllerComponents: ControllerComponents)
-                              (implicit executionContext: ExecutionContext)
+class UserController @Inject()(
+        smsService: SmsService,
+        parser: PlayBodyParsers,
+        controllerComponents: ControllerComponents
+    )(implicit executionContext: ExecutionContext)
   extends AbstractController(controllerComponents)
 {
   def authenticate(): Action[JsValue] = Action.async(parser.json) {
@@ -20,5 +24,11 @@ class UserController @Inject()(parser: PlayBodyParsers, controllerComponents: Co
       authenticateUser <- Future.fromTry(deserialize[AuthenticateUser])
       _ = println(authenticateUser)
     } yield Ok(AuthenticateResult(success = true).toJson)
+  }
+
+  def register(): Action[JsValue] = Action.async(parser.json) {
+    implicit request: Request[JsValue] => for {
+      registerUser <- Future.fromTry(deserialize[RegisterUser])
+    }
   }
 }

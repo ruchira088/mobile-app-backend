@@ -7,7 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.3"
 
-libraryDependencies += guice
+libraryDependencies ++= Seq(guice, ws)
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-sns" % "1.11.213"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
 // Adds additional packages into Twirl
