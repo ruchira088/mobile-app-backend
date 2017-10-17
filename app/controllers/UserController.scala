@@ -4,17 +4,15 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.request.body.{AuthenticateUser, RegisterUser}
 import controllers.response.AuthenticateResult
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import services.SmsService
-import services.implementations.AirtableService
-import utils.ControllerUtils.deserialize
+import services.airtable.AirtableService
+import utils.JsonUtils.deserialize
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserController @Inject()(
-        smsService: SmsService,
         airtableService: AirtableService,
         parser: PlayBodyParsers,
         controllerComponents: ControllerComponents
@@ -31,7 +29,8 @@ class UserController @Inject()(
   def register(): Action[JsValue] = Action.async(parser.json) {
     implicit request: Request[JsValue] => for {
       RegisterUser(mobileNumber) <- Future.fromTry(deserialize[RegisterUser])
-      stylist <- airtableService.fetchStylist(mobileNumber)
-    } yield Ok(stylist)
+      airtableStylist <- airtableService.fetchStylist(mobileNumber)
+//      passcodeLength <- ConfigUtils.getEnvValueAsFuture(E)
+    } yield Ok(Json.toJson(airtableStylist))
   }
 }

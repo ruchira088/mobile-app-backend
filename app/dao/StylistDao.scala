@@ -1,0 +1,6 @@
+package dao
+
+trait StylistDao
+{
+
+}

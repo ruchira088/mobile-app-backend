@@ -1,4 +1,4 @@
-package services.implementations.sms
+package services.sms
 
 sealed trait MessageAttributeDataType
 {

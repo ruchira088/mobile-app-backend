@@ -1,4 +1,4 @@
-package services
+package services.sms
 
 import scala.concurrent.Future
 

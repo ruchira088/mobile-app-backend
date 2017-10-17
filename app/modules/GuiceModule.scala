@@ -1,8 +1,7 @@
 package modules
 
 import com.google.inject.AbstractModule
-import services.SmsService
-import services.implementations.sms.AwsSmsService
+import services.sms.{AwsSmsService, SmsService}
 
 class GuiceModule extends AbstractModule
 {

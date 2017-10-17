@@ -9,7 +9,9 @@ scalaVersion := "2.12.3"
 
 libraryDependencies ++= Seq(guice, ws)
 libraryDependencies += "com.amazonaws" % "aws-java-sdk-sns" % "1.11.213"
+libraryDependencies += "org.reactivemongo" % "play2-reactivemongo_2.12" % "0.12.7-play26"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
+
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "au.com.flayr.controllers._"

@@ -1,4 +1,4 @@
-package services.implementations.sms
+package services.sms
 
 import javax.inject.{Inject, Singleton}
 
@@ -6,7 +6,6 @@ import com.amazonaws.services.sns.model.{MessageAttributeValue, PublishRequest}
 import com.amazonaws.services.sns.{AmazonSNSAsync, AmazonSNSAsyncClientBuilder}
 import constants.{ConfigValues, EnvVariables}
 import constants.aws.SnsConstants
-import services.SmsService
 import utils.ConfigUtils._
 import utils.ScalaUtils
 
