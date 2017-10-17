@@ -37,12 +37,16 @@ class AwsSmsService @Inject()(implicit executionContext: ExecutionContext) exten
 
   override def sendMessage(mobileNumber: PhoneNumber, textMessage: String): Future[String] =
   {
-    val publishRequest = new PublishRequest()
-      .withPhoneNumber(mobileNumber)
+    for {
+      sanitizedPhoneNumber <- Future.fromTry(sanitize(mobileNumber))
+
+      publishRequest = new PublishRequest()
+        .withPhoneNumber(sanitizedPhoneNumber)
         .withMessage(textMessage)
         .withMessageAttributes(messageAttributes().asJava)
 
-    ScalaUtils.simpleConversionToScalaFuture(asyncSnsClient.publishAsync(publishRequest))
-        .map(_.getMessageId)
+      publishResult <- ScalaUtils.simpleConversionToScalaFuture(asyncSnsClient.publishAsync(publishRequest))
+
+    } yield publishResult.getMessageId
   }
 }
