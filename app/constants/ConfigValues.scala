@@ -13,4 +13,8 @@ object ConfigValues
   val DEFAULT_PASSCODE_LENGTH = 6
 
   val MONGO_MAX_QUERY_RESULTS_SIZE: Int = -1
+
+  val DEFAULT_REDIS_HOST = "localhost"
+
+  val DEFAULT_REDIS_PORT = 6379
 }
