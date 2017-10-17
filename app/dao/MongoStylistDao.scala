@@ -9,14 +9,8 @@ import services.MongoCollection
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class MongoStylistDao @Inject()(reactiveMongoApi: ReactiveMongoApi)(implicit executionContext: ExecutionContext)
-  extends MongoCollection[Stylist](MongoStylistDao.COLLECTION_NAME, reactiveMongoApi)
+class MongoStylistDao @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit executionContext: ExecutionContext)
+  extends MongoCollection[Stylist]
 {
-
-
-}
-
-object MongoStylistDao
-{
-  val COLLECTION_NAME = "stylists"
+  override def collectionName = "stylists"
 }
