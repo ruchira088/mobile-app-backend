@@ -22,18 +22,21 @@ class UserController @Inject()(
   extends AbstractController(controllerComponents)
 {
   def authenticate(): Action[JsValue] = Action.async(parser.json) {
-    implicit request: Request[JsValue] => for {
-      authenticateUser <- Future.fromTry(deserialize[AuthenticateUser])
-      _ = println(authenticateUser)
-    } yield Ok(AuthenticateResult(success = true).toJson)
+    implicit request: Request[JsValue] => for
+      {
+        authenticateUser <- Future.fromTry(deserialize[AuthenticateUser])
+        _ = println(authenticateUser)
+      }
+      yield Ok(AuthenticateResult(success = true).toJson)
   }
 
   def register(): Action[JsValue] = Action.async(parser.json) {
-    implicit request: Request[JsValue] => for {
-      RegisterUser(mobileNumber) <- Future.fromTry(deserialize[RegisterUser])
-      airtableStylist <- airtableService.fetchStylist(mobileNumber)
-      (_, stylist) <- registrationService.register(airtableStylist)
-//      passcodeLength <- ConfigUtils.getEnvValueAsFuture(E)
-    } yield Ok(Json.obj("stylistId" -> stylist.id))
+    implicit request: Request[JsValue] => for
+      {
+        RegisterUser(mobileNumber) <- Future.fromTry(deserialize[RegisterUser])
+        airtableStylist <- airtableService.fetchStylist(mobileNumber)
+        (_, stylist) <- registrationService.register(airtableStylist)
+      }
+      yield Ok(Json.obj("stylistId" -> stylist.id))
   }
 }

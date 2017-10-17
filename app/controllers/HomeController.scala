@@ -3,7 +3,6 @@ package controllers
 import javax.inject._
 
 import play.api.mvc._
-import play.modules.reactivemongo.ReactiveMongoApi
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
