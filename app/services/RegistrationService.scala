@@ -2,8 +2,9 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import constants.EnvVariables
+import constants.{ConfigValues, EnvVariables}
 import dao.StylistDao
+import exceptions.UndefinedEnvValueException
 import models.Stylist
 import services.airtable.model.AirtableStylist
 import services.kvstore.KeyValueStore
@@ -23,10 +24,16 @@ class RegistrationService @Inject()(smsService: SmsService, keyValueStore: KeyVa
   def passcodeKey(stylist: Stylist): String =
     s"$PASSCODE_KEY_PREFIX-${stylist.mobile}"
 
+  private def getPasscodeLength(): Future[Int] = for {
+    passcodeLengthStr <- getEnvValueAsFuture(EnvVariables.PASSCODE_LENGTH)
+    length <- Future.fromTry(convert[String, Int](_.toInt)(passcodeLengthStr))
+  } yield length
+
   def register(airtableStylist: AirtableStylist): Future[(String, Stylist)] = for {
 
-    passcodeLengthStr <- getEnvValueAsFuture(EnvVariables.PASSCODE_LENGTH)
-    passcodeLength <- Future.fromTry(convert[String, Int](_.toInt)(passcodeLengthStr))
+    passcodeLength <- getPasscodeLength().recover {
+      case UndefinedEnvValueException(_) => ConfigValues.DEFAULT_PASSCODE_LENGTH
+    }
     passcode = GeneralUtils.passcode(passcodeLength)
 
     stylist = Stylist(airtableStylist)
