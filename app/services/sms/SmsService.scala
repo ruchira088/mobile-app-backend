@@ -1,10 +1,10 @@
 package services.sms
 
+import services.types.PhoneNumber
+
 import scala.concurrent.Future
 
 trait SmsService
 {
-  type PhoneNumber = String
-
-  def sendMessage(mobileNumber: PhoneNumber, textMessage: String): Future[String]
+  def sendMessage(phoneNumber: PhoneNumber, textMessage: String): Future[String]
 }

@@ -1,5 +1,8 @@
 package constants
 
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
+
 object ConfigValues
 {
   val DEFAULT_SMS_SENDER_ID = "Flayr"
@@ -21,4 +24,6 @@ object ConfigValues
   val DEFAULT_COUNTRY_CODE = "+61"
 
   val DEFAULT_LOCAL_MOBILE_NUMBER_LENGTH = 9
+
+  val PASSCODE_LIFE_TIME: FiniteDuration = 5 minutes
 }

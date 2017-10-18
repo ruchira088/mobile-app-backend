@@ -2,6 +2,7 @@ package services.types
 
 import constants.ConfigValues._
 import exceptions.InvalidMobileNumberException
+import play.api.libs.json.{Json, OFormat}
 
 import scala.util.matching.Regex
 import scala.util.{Failure, Success, Try}
@@ -15,6 +16,8 @@ case class PhoneNumber(localNumber: String, countryCode: String = DEFAULT_COUNTR
 
 object PhoneNumber
 {
+  implicit val oFormat: OFormat[PhoneNumber] = Json.format[PhoneNumber]
+
   private val SHORT_FORMAT: Regex = s"(\\d{$DEFAULT_LOCAL_MOBILE_NUMBER_LENGTH})".r
 
   private val MEDIUM_FORMAT: Regex = s"0(\\d{$DEFAULT_LOCAL_MOBILE_NUMBER_LENGTH})".r

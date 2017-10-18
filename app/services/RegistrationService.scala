@@ -7,16 +7,15 @@ import dao.StylistDao
 import exceptions.UndefinedEnvValueException
 import models.Stylist
 import services.airtable.model.AirtableStylist
-import services.kvstore.KeyValueStore
 import services.sms.SmsService
+import services.types.Passcode
 import utils.ConfigUtils.getEnvValueAsFuture
-import utils.GeneralUtils
 import utils.ScalaUtils.convert
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RegistrationService @Inject()(smsService: SmsService, keyValueStore: KeyValueStore, stylistDao: StylistDao)
+class RegistrationService @Inject()(smsService: SmsService, authenticationService: AuthenticationService, stylistDao: StylistDao)
                                    (implicit executionContext: ExecutionContext)
 {
   val PASSCODE_KEY_PREFIX = "passcode"
@@ -29,19 +28,20 @@ class RegistrationService @Inject()(smsService: SmsService, keyValueStore: KeyVa
     length <- Future.fromTry(convert[String, Int](_.toInt)(passcodeLengthStr))
   } yield length
 
-  def register(airtableStylist: AirtableStylist): Future[(String, Stylist)] = for {
+  def register(airtableStylist: AirtableStylist): Future[(Passcode, Stylist)] = for {
 
     passcodeLength <- getPasscodeLength().recover {
       case UndefinedEnvValueException(_) => ConfigValues.DEFAULT_PASSCODE_LENGTH
     }
-    passcode = GeneralUtils.passcode(passcodeLength)
 
-    stylist = Stylist(airtableStylist)
-    setPasscode = keyValueStore.set[String](passcodeKey(stylist), passcode)
+    stylist <- Future.fromTry(Stylist(airtableStylist))
+    passcode = Passcode(stylist.mobile, passcodeLength)
+
+    savePasscode = authenticationService.insertPasscode(passcode)
     saveStylist = stylistDao.insert(stylist)
-    sendSMS = smsService.sendMessage(stylist.mobile, passcode)
+    sendSMS = smsService.sendMessage(stylist.mobile, passcode.code)
 
-    _ <- Future.sequence(List(setPasscode, saveStylist, sendSMS))
+    _ <- Future.sequence(List(savePasscode, saveStylist, sendSMS))
 
   } yield (passcode, stylist)
 

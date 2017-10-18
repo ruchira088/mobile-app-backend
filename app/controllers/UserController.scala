@@ -14,10 +14,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserController @Inject()(
-        registrationService: RegistrationService,
-        airtableService: AirtableService,
-        parser: PlayBodyParsers,
-        controllerComponents: ControllerComponents
+                                registrationService: RegistrationService,
+                                airtableService: AirtableService,
+                                parser: PlayBodyParsers,
+                                controllerComponents: ControllerComponents
     )(implicit executionContext: ExecutionContext)
   extends AbstractController(controllerComponents)
 {

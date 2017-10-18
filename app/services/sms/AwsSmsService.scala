@@ -36,18 +36,17 @@ class AwsSmsService @Inject()(implicit executionContext: ExecutionContext) exten
     SnsConstants.MAX_PRICE -> messageAttributeValue(maxSmsPrice(), NumberType)
   )
 
-  override def sendMessage(mobileNumber: PhoneNumber, textMessage: String): Future[String] =
+  override def sendMessage(phoneNumber: PhoneNumber, textMessage: String): Future[String] =
   {
+    val publishRequest = new PublishRequest()
+      .withPhoneNumber(phoneNumber.longFormat)
+      .withMessage(textMessage)
+      .withMessageAttributes(messageAttributes().asJava)
+
     for {
-      phoneNumber <- Future.fromTry(PhoneNumber.parse(mobileNumber))
-
-      publishRequest = new PublishRequest()
-        .withPhoneNumber(phoneNumber.longFormat)
-        .withMessage(textMessage)
-        .withMessageAttributes(messageAttributes().asJava)
-
-      publishResult <- ScalaUtils.simpleConversionToScalaFuture(asyncSnsClient.publishAsync(publishRequest))
-
+      publishResult <- ScalaUtils.simpleConversionToScalaFuture(
+        asyncSnsClient.publishAsync(publishRequest)
+      )
     } yield publishResult.getMessageId
   }
 }
