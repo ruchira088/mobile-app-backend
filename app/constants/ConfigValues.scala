@@ -17,4 +17,8 @@ object ConfigValues
   val DEFAULT_REDIS_HOST = "localhost"
 
   val DEFAULT_REDIS_PORT = 6379
+
+  val DEFAULT_COUNTRY_CODE = "+61"
+
+  val DEFAULT_LOCAL_MOBILE_NUMBER_LENGTH = 9
 }

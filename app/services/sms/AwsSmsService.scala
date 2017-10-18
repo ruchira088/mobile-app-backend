@@ -6,6 +6,7 @@ import com.amazonaws.services.sns.model.{MessageAttributeValue, PublishRequest}
 import com.amazonaws.services.sns.{AmazonSNSAsync, AmazonSNSAsyncClientBuilder}
 import constants.{ConfigValues, EnvVariables}
 import constants.aws.SnsConstants
+import services.types.PhoneNumber
 import utils.ConfigUtils._
 import utils.ScalaUtils
 
@@ -38,10 +39,10 @@ class AwsSmsService @Inject()(implicit executionContext: ExecutionContext) exten
   override def sendMessage(mobileNumber: PhoneNumber, textMessage: String): Future[String] =
   {
     for {
-      sanitizedPhoneNumber <- Future.fromTry(parseMobileNumber(mobileNumber))
+      phoneNumber <- Future.fromTry(PhoneNumber.parse(mobileNumber))
 
       publishRequest = new PublishRequest()
-        .withPhoneNumber(sanitizedPhoneNumber)
+        .withPhoneNumber(phoneNumber.longFormat)
         .withMessage(textMessage)
         .withMessageAttributes(messageAttributes().asJava)
 
