@@ -15,4 +15,6 @@ object EnvVariables
   val REDIS_HOST = "REDIS_HOST"
 
   val REDIS_PORT = "REDIS_PORT"
+
+  val SCALA_ENV = "SCALA_ENV"
 }
