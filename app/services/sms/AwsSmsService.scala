@@ -38,7 +38,7 @@ class AwsSmsService @Inject()(implicit executionContext: ExecutionContext) exten
   override def sendMessage(mobileNumber: PhoneNumber, textMessage: String): Future[String] =
   {
     for {
-      sanitizedPhoneNumber <- Future.fromTry(sanitize(mobileNumber))
+      sanitizedPhoneNumber <- Future.fromTry(parseMobileNumber(mobileNumber))
 
       publishRequest = new PublishRequest()
         .withPhoneNumber(sanitizedPhoneNumber)
