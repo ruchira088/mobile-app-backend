@@ -3,11 +3,11 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import controllers.request.body.{AuthenticateUser, RegisterUser}
-import controllers.response.AuthenticateResult
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import services.RegistrationService
 import services.airtable.AirtableService
+import services.types.AuthToken
+import services.{AuthenticationService, RegistrationService}
 import utils.JsonUtils.deserialize
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,19 +15,21 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UserController @Inject()(
                                 registrationService: RegistrationService,
+                                authenticationService: AuthenticationService,
                                 airtableService: AirtableService,
                                 parser: PlayBodyParsers,
                                 controllerComponents: ControllerComponents
     )(implicit executionContext: ExecutionContext)
   extends AbstractController(controllerComponents)
 {
-  def authenticate(): Action[JsValue] = Action.async(parser.json) {
+  def login(): Action[JsValue] = Action.async(parser.json) {
     implicit request: Request[JsValue] => for
       {
-        authenticateUser <- Future.fromTry(deserialize[AuthenticateUser])
-        _ = println(authenticateUser)
+        AuthenticateUser(mobileNumber, passcode) <- Future.fromTry(deserialize[AuthenticateUser])
+        authToken: AuthToken <- authenticationService.login(mobileNumber, passcode)
+        _ = println(authToken)
       }
-      yield Ok(AuthenticateResult(success = true).toJson)
+      yield Ok(Json.toJson(authToken))
   }
 
   def register(): Action[JsValue] = Action.async(parser.json) {
