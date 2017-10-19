@@ -15,7 +15,7 @@ case class Stylist(
     firstName: String,
     email: String,
     mobile: PhoneNumber,
-    profileName: String
+    airtableId: String
 )
 
 object Stylist
@@ -25,9 +25,9 @@ object Stylist
   def apply(airtableStylist: AirtableStylist): Try[Stylist] = for
     {
       phoneNumber <- PhoneNumber.parse(airtableStylist.Mobile)
-      AirtableStylist(firstName, _, email, profileHandle) = airtableStylist
+      AirtableStylist(firstName, _, email, rowId) = airtableStylist
 
-      stylist = Stylist(randomUuid(), DateTime.now(), firstName, email, phoneNumber, profileHandle)
+      stylist = Stylist(randomUuid(), DateTime.now(), firstName, email, phoneNumber, rowId)
     }
     yield stylist
 

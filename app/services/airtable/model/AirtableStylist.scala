@@ -6,7 +6,7 @@ case class AirtableStylist(
   FirstName: String,
   Mobile: String,
   Email: String,
-  `Profile Handle`: String
+  RowID: String
 )
 
 object AirtableStylist

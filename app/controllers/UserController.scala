@@ -2,9 +2,10 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import controllers.request.body.{AuthenticateUser, RegisterUser}
+import controllers.requests.bodies.{AuthenticateUser, RegisterUser}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
+import controllers.actions.{AuthenticatedAction, AuthorizedAction, Read}
 import services.airtable.AirtableService
 import services.types.AuthToken
 import services.{AuthenticationService, RegistrationService}
@@ -16,6 +17,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserController @Inject()(
                                 registrationService: RegistrationService,
                                 authenticationService: AuthenticationService,
+                                authenticatedAction: AuthenticatedAction,
+                                authorizedAction: AuthorizedAction,
                                 airtableService: AirtableService,
                                 parser: PlayBodyParsers,
                                 controllerComponents: ControllerComponents
@@ -41,4 +44,12 @@ class UserController @Inject()(
       }
       yield Ok(Json.obj("stylistId" -> stylist.id))
   }
+
+  def bookings(stylistAirtableId: String): Action[AnyContent] =
+    authenticatedAction.andThen(authorizedAction(Read, stylistAirtableId)).async {
+      for {
+        bookings <- airtableService.fetchBookings(stylistAirtableId)
+      }
+      yield Ok(Json.toJson(bookings))
+    }
 }

@@ -11,7 +11,7 @@ object ConfigValues
 
   val DEFAULT_SMS_MAX_PRICE = "0.50"
 
-  val AIRTABLE_FIND_STYLIST_PATH = "find"
+  val AIRTABLE_FIND_STYLIST_PATH = "query/stylist"
 
   val DEFAULT_PASSCODE_LENGTH = 6
 
@@ -26,4 +26,6 @@ object ConfigValues
   val DEFAULT_LOCAL_MOBILE_NUMBER_LENGTH = 9
 
   val PASSCODE_LIFE_TIME: FiniteDuration = 5 minutes
+
+  def getBookingsUrl(airtableStylistId: String): String = s"query/$airtableStylistId/bookings"
 }
