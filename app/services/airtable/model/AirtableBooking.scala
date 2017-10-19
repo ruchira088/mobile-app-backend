@@ -5,6 +5,8 @@ import play.api.libs.json.{Json, OFormat}
 case class AirtableBooking(
       rowId: String,
       leadStatus: String,
+      eventDate: String,
+      eventTime: String,
       suburb: String,
       state: String,
       mobileNumber: String,
