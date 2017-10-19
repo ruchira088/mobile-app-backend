@@ -3,6 +3,7 @@ package services.airtable
 import javax.inject.{Inject, Singleton}
 
 import constants.{ConfigValues, EnvVariables}
+import org.joda.time.DateTime
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import services.airtable.model.{AirtableBooking, AirtableStylist}
@@ -38,6 +39,8 @@ class AirtableService @Inject()(wsClient: WSClient)(implicit executionContext: E
       response <- wsClient.url(s"$airtableServiceUrl/${ConfigValues.getBookingsUrl(stylistAirtableId)}").get()
 
       bookings <- Future.fromTry(deserialize[List[AirtableBooking]](response.json))
+
+      sortedBookings = bookings.sortBy(booking => DateTime.parse(booking.eventDate).getMillis)
     }
-    yield bookings
+    yield sortedBookings
 }
