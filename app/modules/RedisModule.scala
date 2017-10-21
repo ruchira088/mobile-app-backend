@@ -20,7 +20,7 @@ class RedisModule extends AbstractModule
   {
     getEnvValue(EnvVariables.SCALA_ENV) match
     {
-      case Some(GeneralConstants.TEST_ENV_VALUE) => {
+      case Some(GeneralConstants.LOCAL_TEST_ENV_VALUE) => {
         testConfiguration()
       }
 

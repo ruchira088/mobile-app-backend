@@ -17,7 +17,7 @@ class GuiceModule extends AbstractModule
         productionEnvBindings()
       }
 
-      case Some(GeneralConstants.TEST_ENV_VALUE) => {
+      case Some(GeneralConstants.LOCAL_TEST_ENV_VALUE) => {
         testEnvBindings()
       }
 

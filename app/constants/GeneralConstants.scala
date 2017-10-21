@@ -6,5 +6,5 @@ object GeneralConstants
 
   val DEVELOPMENT_ENV_VALUE = "DEVELOPMENT"
 
-  val TEST_ENV_VALUE = "TEST"
+  val LOCAL_TEST_ENV_VALUE = "LOCAL_TEST"
 }
