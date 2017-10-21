@@ -1,5 +1,6 @@
 logs
 target
+.circleci
 /.idea
 /.idea_modules
 /.classpath

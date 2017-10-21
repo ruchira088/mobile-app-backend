@@ -3,7 +3,7 @@ package modules
 import akka.actor.ActorSystem
 import com.google.inject.AbstractModule
 import constants.ConfigValues._
-import constants.EnvVariables
+import constants.{ConfigValues, EnvVariables, GeneralConstants}
 import redis.RedisClient
 import utils.ConfigUtils.getEnvValue
 import utils.ScalaUtils.convert
@@ -17,6 +17,24 @@ import scala.util.{Failure, Success}
 class RedisModule extends AbstractModule
 {
   def configure() =
+  {
+    getEnvValue(EnvVariables.SCALA_ENV) match
+    {
+      case Some(GeneralConstants.TEST_ENV_VALUE) => {
+        testConfiguration()
+      }
+
+      case _ => {
+        nonTestConfiguration()
+      }
+    }
+  }
+
+  def testConfiguration() = {
+
+  }
+
+  def nonTestConfiguration() =
   {
     val redisHost = getEnvValue(EnvVariables.REDIS_HOST) getOrElse DEFAULT_REDIS_HOST
 
@@ -40,6 +58,7 @@ class RedisModule extends AbstractModule
     Await.ready(verification, 30 seconds)
 
     bind(classOf[RedisClient]).toInstance(redisClient)
+
   }
 
   def verifyRedisServer(redisClient: RedisClient): Future[String] = for {

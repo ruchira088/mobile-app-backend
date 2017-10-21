@@ -8,7 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait StylistDao
 {
-  def insert(stylist: Stylist)(implicit executionContext: ExecutionContext): Future[Int]
+  def insert(stylist: Stylist): Future[Int]
 
   def findByMobileNumber(phoneNumber: PhoneNumber): FutureO[Stylist]
 }

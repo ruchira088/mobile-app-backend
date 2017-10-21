@@ -9,7 +9,7 @@ import services.MongoCollection
 import services.types.PhoneNumber
 import utils.FutureO
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MongoStylistDao @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit executionContext: ExecutionContext)
@@ -26,4 +26,5 @@ class MongoStylistDao @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit
       } yield stylists.headOption
     }
 
+  override def insert(stylist: Stylist): Future[Int] = insertItem(stylist)
 }

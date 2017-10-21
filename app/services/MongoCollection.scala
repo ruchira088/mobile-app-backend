@@ -20,7 +20,7 @@ trait MongoCollection[A]
   def getCollection(implicit executionContext: ExecutionContext): Future[JSONCollection] =
     reactiveMongoApi.database.map(_.collection[JSONCollection](collectionName))
 
-  def insert(item: A)(implicit executionContext: ExecutionContext): Future[Int] = for {
+  def insertItem(item: A)(implicit executionContext: ExecutionContext): Future[Int] = for {
       collection <- getCollection
       writeResult <- collection.insert(item)
     } yield writeResult.n

@@ -2,8 +2,10 @@ package controllers
 
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test._
 import play.api.test.Helpers._
+import utils.TestConfigUtils
 
 /**
  * Add your spec here.
@@ -12,6 +14,8 @@ import play.api.test.Helpers._
  * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
  */
 class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+
+
 
   "HomeController GET" should {
 
@@ -42,4 +46,6 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       contentAsString(home) must include ("Welcome to Play")
     }
   }
+
+  override def fakeApplication() = new GuiceApplicationBuilder().configure(TestConfigUtils.appConfiguration).build()
 }
