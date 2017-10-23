@@ -59,6 +59,7 @@ class UserController @Inject()(
         {
           registerDeviceToken <- Future.fromTry(deserialize[RegisterDeviceToken])
           pushNotification <- registrationService.registerForPushNotifications(stylistAirtableId, registerDeviceToken)
+          _ = println(registerDeviceToken.deviceToken)
         }
         yield Ok(Json.obj("pushNotificationId" -> pushNotification.id))
     }

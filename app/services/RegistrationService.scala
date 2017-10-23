@@ -7,6 +7,7 @@ import controllers.requests.bodies.RegisterDeviceToken
 import dao.{PushNotificationDao, StylistDao}
 import exceptions.UndefinedEnvValueException
 import models.{PushNotification, Stylist}
+import org.joda.time.DateTime
 import services.airtable.model.AirtableStylist
 import services.sms.SmsService
 import services.types.Passcode
@@ -54,6 +55,7 @@ class RegistrationService @Inject()(
     pushNotificationDao.insert(
       PushNotification(
         GeneralUtils.randomUuid(),
+        DateTime.now(),
         registerDeviceToken.stylistId,
         airtableStylistId,
         registerDeviceToken.deviceToken
