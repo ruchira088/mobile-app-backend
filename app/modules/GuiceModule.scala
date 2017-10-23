@@ -2,7 +2,7 @@ package modules
 
 import com.google.inject.AbstractModule
 import constants.{EnvVariables, GeneralConstants}
-import dao.{InMemoryStylistDao, MongoStylistDao, StylistDao}
+import dao._
 import services.kvstore.{InMemoryKeyValueStore, KeyValueStore, RedisKeyValueStore}
 import services.sms.{AwsSmsService, MockSmsService, SmsService}
 import utils.ConfigUtils
@@ -31,6 +31,7 @@ class GuiceModule extends AbstractModule
   {
     bind(classOf[KeyValueStore]).to(classOf[RedisKeyValueStore])
     bind(classOf[StylistDao]).to(classOf[MongoStylistDao])
+    bind(classOf[PushNotificationDao]).to(classOf[MongoPushNotificationDao])
   }
 
   def productionEnvBindings() =

@@ -2,10 +2,10 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import controllers.requests.bodies.{AuthenticateUser, RegisterUser}
+import controllers.requests.bodies.{AuthenticateUser, RegisterDeviceToken, RegisterUser}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import controllers.actions.{AuthenticatedAction, AuthorizedAction, Read}
+import controllers.actions.{AuthenticatedAction, AuthorizedAction, Read, Write}
 import services.airtable.AirtableService
 import services.types.AuthToken
 import services.{AuthenticationService, RegistrationService}
@@ -51,5 +51,15 @@ class UserController @Inject()(
         bookings <- airtableService.fetchBookings(stylistAirtableId)
       }
       yield Ok(Json.toJson(bookings))
+    }
+
+  def registerForPushNotifications(stylistAirtableId: String): Action[JsValue] =
+    authenticatedAction.andThen(authorizedAction(Write, stylistAirtableId)).async(parser.json) {
+      implicit request: Request[JsValue] => for
+        {
+          registerDeviceToken <- Future.fromTry(deserialize[RegisterDeviceToken])
+          pushNotification <- registrationService.registerForPushNotifications(stylistAirtableId, registerDeviceToken)
+        }
+        yield Ok(Json.obj("pushNotificationId" -> pushNotification.id))
     }
 }

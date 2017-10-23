@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MongoStylistDao @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit executionContext: ExecutionContext)
-  extends MongoCollection[Stylist] with StylistDao
+  extends StylistDao with MongoCollection[Stylist]
 {
   override def collectionName = "stylists"
 

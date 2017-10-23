@@ -3,20 +3,25 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import constants.{ConfigValues, EnvVariables}
-import dao.StylistDao
+import controllers.requests.bodies.RegisterDeviceToken
+import dao.{PushNotificationDao, StylistDao}
 import exceptions.UndefinedEnvValueException
-import models.Stylist
+import models.{PushNotification, Stylist}
 import services.airtable.model.AirtableStylist
 import services.sms.SmsService
 import services.types.Passcode
 import utils.ConfigUtils.getEnvValueAsFuture
+import utils.GeneralUtils
 import utils.ScalaUtils.convert
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RegistrationService @Inject()(smsService: SmsService, authenticationService: AuthenticationService, stylistDao: StylistDao)
-                                   (implicit executionContext: ExecutionContext)
+class RegistrationService @Inject()(
+         smsService: SmsService,
+         authenticationService: AuthenticationService,
+         stylistDao: StylistDao,
+         pushNotificationDao: PushNotificationDao)(implicit executionContext: ExecutionContext)
 {
   val PASSCODE_KEY_PREFIX = "passcode"
 
@@ -44,5 +49,15 @@ class RegistrationService @Inject()(smsService: SmsService, authenticationServic
     _ <- Future.sequence(List(savePasscode, saveStylist, sendSMS))
 
   } yield (passcode, stylist)
+
+  def registerForPushNotifications(airtableStylistId: String, registerDeviceToken: RegisterDeviceToken) =
+    pushNotificationDao.insert(
+      PushNotification(
+        GeneralUtils.randomUuid(),
+        registerDeviceToken.stylistId,
+        airtableStylistId,
+        registerDeviceToken.deviceToken
+      )
+    )
 
 }
