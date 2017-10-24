@@ -1,7 +1,7 @@
 name := """mobile-app-backend"""
-organization := "au.com.flayr"
+organization := "com.ruchij"
 
-version := "1.0-SNAPSHOT"
+version := "0.0.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
