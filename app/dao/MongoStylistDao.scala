@@ -20,11 +20,11 @@ class MongoStylistDao @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit
   override implicit val oFormat: OFormat[Stylist] = Stylist.oFormat
 
   override def findByMobileNumber(phoneNumber: PhoneNumber): FutureO[Stylist] =
-    FutureO {
-      for {
-        stylists <- query(Json.obj("mobile" -> Json.toJson(phoneNumber)))
-      } yield stylists.headOption
-    }
+    singleResultQuery(Json.obj("mobile" -> Json.toJson(phoneNumber)))
+
+  override def findByAirtableId(airtableId: String): FutureO[Stylist] =
+    singleResultQuery(Json.obj("airtableId" -> airtableId))
 
   override def insert(stylist: Stylist): Future[Int] = insertItem(stylist)
+
 }

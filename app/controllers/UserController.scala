@@ -6,6 +6,7 @@ import controllers.requests.bodies.{AuthenticateUser, RegisterDeviceToken, Regis
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import controllers.actions.{AuthenticatedAction, AuthorizedAction, Read, Write}
+import controllers.requests.types.AuthorizedRequest
 import services.airtable.AirtableService
 import services.types.AuthToken
 import services.{AuthenticationService, RegistrationService}
@@ -55,12 +56,12 @@ class UserController @Inject()(
 
   def registerForPushNotifications(stylistAirtableId: String): Action[JsValue] =
     authenticatedAction.andThen(authorizedAction(Write, stylistAirtableId)).async(parser.json) {
-      implicit request: Request[JsValue] => for
+      case AuthorizedRequest(_, stylist, request) => for
         {
-          registerDeviceToken <- Future.fromTry(deserialize[RegisterDeviceToken])
-          pushNotification <- registrationService.registerForPushNotifications(stylistAirtableId, registerDeviceToken)
+          registerDeviceToken <- Future.fromTry(deserialize[RegisterDeviceToken](request.body))
+          _ <- registrationService.registerForPushNotifications(stylist, registerDeviceToken)
           _ = println(registerDeviceToken.deviceToken)
         }
-        yield Ok(Json.obj("pushNotificationId" -> pushNotification.id))
+        yield Ok(Json.obj("success" -> true))
     }
 }

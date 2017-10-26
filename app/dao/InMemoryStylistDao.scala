@@ -21,8 +21,13 @@ class InMemoryStylistDao @Inject()(implicit executionContext: ExecutionContext) 
     Future.successful((DateTime.now().getMillis - startTime.getMillis).toInt)
   }
 
-  override def findByMobileNumber(phoneNumber: PhoneNumber) =
-    FutureO {
-      Future.successful(collection.find(_.mobile == phoneNumber))
+  override def findByMobileNumber(phoneNumber: PhoneNumber): FutureO[Stylist] = find(_.mobile == phoneNumber)
+
+  override def findByAirtableId(airtableId: String): FutureO[Stylist] = find(_.airtableId == airtableId)
+
+  def find(query: Stylist => Boolean): FutureO[Stylist] =
+  FutureO {
+      Future.successful(collection.find(query))
     }
+
 }

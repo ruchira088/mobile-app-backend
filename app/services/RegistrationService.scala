@@ -9,6 +9,7 @@ import exceptions.UndefinedEnvValueException
 import models.{PushNotification, Stylist}
 import org.joda.time.DateTime
 import services.airtable.model.AirtableStylist
+import services.notifications.PushNotificationService
 import services.sms.SmsService
 import services.types.Passcode
 import utils.ConfigUtils.getEnvValueAsFuture
@@ -22,6 +23,7 @@ class RegistrationService @Inject()(
          smsService: SmsService,
          authenticationService: AuthenticationService,
          stylistDao: StylistDao,
+         pushNotificationService: PushNotificationService,
          pushNotificationDao: PushNotificationDao)(implicit executionContext: ExecutionContext)
 {
   val PASSCODE_KEY_PREFIX = "passcode"
@@ -51,15 +53,19 @@ class RegistrationService @Inject()(
 
   } yield (passcode, stylist)
 
-  def registerForPushNotifications(airtableStylistId: String, registerDeviceToken: RegisterDeviceToken) =
-    pushNotificationDao.insert(
-      PushNotification(
-        GeneralUtils.randomUuid(),
-        DateTime.now(),
-        registerDeviceToken.stylistId,
-        airtableStylistId,
-        registerDeviceToken.deviceToken
+  def registerForPushNotifications(stylist: Stylist, registerDeviceToken: RegisterDeviceToken) =
+    Future.sequence(
+      List(
+        pushNotificationDao.insert(
+          PushNotification(
+            GeneralUtils.randomUuid(),
+            DateTime.now(),
+            registerDeviceToken.stylistId,
+            stylist.airtableId,
+            registerDeviceToken.deviceToken
+          )
+        ),
+        pushNotificationService.register(stylist, registerDeviceToken)
       )
     )
-
 }

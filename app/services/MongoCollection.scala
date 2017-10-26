@@ -6,6 +6,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
 import reactivemongo.api.Cursor
 import reactivemongo.play.json.collection.JSONCollection
+import utils.FutureO
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,18 +21,22 @@ trait MongoCollection[A]
   def getCollection(implicit executionContext: ExecutionContext): Future[JSONCollection] =
     reactiveMongoApi.database.map(_.collection[JSONCollection](collectionName))
 
-  def insertItem(item: A)(implicit executionContext: ExecutionContext): Future[Int] = for {
+  def insertItem(item: A)(implicit executionContext: ExecutionContext): Future[Int] = for
+    {
       collection <- getCollection
       writeResult <- collection.insert(item)
     } yield writeResult.n
 
-  def query(jsObject: JsObject)(implicit executionContext: ExecutionContext): Future[List[A]] = for {
+  def query(jsObject: JsObject, maxResults: Int = MONGO_MAX_QUERY_RESULTS_SIZE)(implicit executionContext: ExecutionContext): Future[List[A]] = for
+    {
       collection <- getCollection
       items <- collection.find(jsObject).cursor[A]()
-        .collect[List](
-          MONGO_MAX_QUERY_RESULTS_SIZE,
-          Cursor.FailOnError[List[A]]()
-        )
+        .collect[List](maxResults, Cursor.FailOnError[List[A]]())
     } yield items
+
+  def singleResultQuery(jsObject: JsObject)(implicit executionContext: ExecutionContext): FutureO[A] =
+    FutureO {
+      query(jsObject, 1).map(_.headOption)
+    }
 
 }

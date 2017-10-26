@@ -3,10 +3,12 @@ package services.airtable.model
 import play.api.libs.json.{Json, OFormat}
 
 case class AirtableStylist(
-  FirstName: String,
-  Mobile: String,
-  Email: String,
-  RowID: String
+      firstName: String,
+      suburb: String,
+      state: String,
+      mobileNumber: String,
+      email: String,
+      rowId: String
 )
 
 object AirtableStylist

@@ -11,4 +11,6 @@ trait StylistDao
   def insert(stylist: Stylist): Future[Int]
 
   def findByMobileNumber(phoneNumber: PhoneNumber): FutureO[Stylist]
+
+  def findByAirtableId(airtableId: String): FutureO[Stylist]
 }
