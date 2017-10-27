@@ -1,12 +1,13 @@
 package services
 
 import constants.ConfigValues._
+import exceptions.UnableToInsertItemException
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
 import reactivemongo.api.Cursor
 import reactivemongo.play.json.collection.JSONCollection
-import utils.FutureO
+import utils.{FutureO, ScalaUtils}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -24,15 +25,21 @@ trait MongoCollection[A]
   def insertItem(item: A)(implicit executionContext: ExecutionContext): Future[Int] = for
     {
       collection <- getCollection
+
       writeResult <- collection.insert(item)
-    } yield writeResult.n
+
+      _ <- ScalaUtils.predicate(writeResult.n != 0, UnableToInsertItemException())
+    }
+    yield writeResult.n
 
   def query(jsObject: JsObject, maxResults: Int = MONGO_MAX_QUERY_RESULTS_SIZE)(implicit executionContext: ExecutionContext): Future[List[A]] = for
     {
       collection <- getCollection
+
       items <- collection.find(jsObject).cursor[A]()
         .collect[List](maxResults, Cursor.FailOnError[List[A]]())
-    } yield items
+    }
+    yield items
 
   def singleResultQuery(jsObject: JsObject)(implicit executionContext: ExecutionContext): FutureO[A] =
     FutureO {

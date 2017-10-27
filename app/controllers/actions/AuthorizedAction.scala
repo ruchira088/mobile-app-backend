@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import controllers.requests.types.{AuthenticatedRequest, AuthorizedRequest}
 import dao.StylistDao
-import exceptions.{InvalidAirtableStylistIdException, UnauthorizedActionException}
+import exceptions.{StylistNotFoundException, UnauthorizedActionException}
 import play.api.mvc._
 import services.AuthorizationService
 import utils.ScalaUtils
@@ -33,7 +33,7 @@ class AuthorizedAction @Inject()(
                   Future.successful(authenticatedStylist)
                 else
                   stylistDao.findByAirtableId(stylistAirtableId)
-                    .flatten(InvalidAirtableStylistIdException(stylistAirtableId))
+                    .flatten(StylistNotFoundException("airtableId", stylistAirtableId))
               }
 
               result <- block(AuthorizedRequest(authenticatedStylist, stylist, wrappedRequest))

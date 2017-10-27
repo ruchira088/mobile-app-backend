@@ -15,10 +15,8 @@ class InMemoryStylistDao @Inject()(implicit executionContext: ExecutionContext) 
 
   override def insert(stylist: Stylist) =
   {
-    val startTime = DateTime.now()
     collection = collection :+ stylist
-
-    Future.successful((DateTime.now().getMillis - startTime.getMillis).toInt)
+    Future.successful(1)
   }
 
   override def findByMobileNumber(phoneNumber: PhoneNumber): FutureO[Stylist] = find(_.mobile == phoneNumber)

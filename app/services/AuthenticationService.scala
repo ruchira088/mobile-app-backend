@@ -3,7 +3,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import dao.StylistDao
-import exceptions.{IncorrectPasscodeException, PasscodeNotGeneratedException, TokenNotFoundException, UnableToSetValueInKeyStoreException}
+import exceptions._
 import services.kvstore.KeyValueStore
 import services.types.{AuthToken, Passcode, PhoneNumber}
 import utils.{GeneralUtils, ScalaUtils}
@@ -36,13 +36,12 @@ class AuthenticationService @Inject()(keyValueStore: KeyValueStore, stylistDao: 
 
       _ <- keyValueStore.delete(passcodeKey(phoneNumber))
 
-      stylist <- stylistDao.findByMobileNumber(phoneNumber).flatten()
+      stylist <- stylistDao.findByMobileNumber(phoneNumber)
+        .flatten(StylistNotFoundException("phoneNumber", phoneNumber.localNumber))
 
       authToken = AuthToken(GeneralUtils.randomUuid(), stylist)
 
-      success <- insertAuthToken(authToken)
-
-      _ <- ScalaUtils.predicate(success, UnableToSetValueInKeyStoreException)
+      _ <- insertAuthToken(authToken)
     }
     yield authToken
 

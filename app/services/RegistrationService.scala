@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 import constants.{ConfigValues, EnvVariables}
 import controllers.requests.bodies.RegisterDeviceToken
 import dao.{PushNotificationDao, StylistDao}
-import exceptions.UndefinedEnvValueException
+import exceptions.{UnableToSetValueInKeyStoreException, UndefinedEnvValueException}
 import models.{PushNotification, Stylist}
 import org.joda.time.DateTime
 import services.airtable.model.AirtableStylist
@@ -39,14 +39,16 @@ class RegistrationService @Inject()(
   def register(airtableStylist: AirtableStylist): Future[(Passcode, Stylist)] = for {
 
     passcodeLength <- getPasscodeLength().recover {
-      case UndefinedEnvValueException(_) => ConfigValues.DEFAULT_PASSCODE_LENGTH
+      case _ : UndefinedEnvValueException => ConfigValues.DEFAULT_PASSCODE_LENGTH
     }
 
     stylist <- Future.fromTry(Stylist(airtableStylist))
-    passcode = Passcode(stylist.mobile, passcodeLength)
 
+    passcode = Passcode(stylist.mobile, passcodeLength)
     savePasscode = authenticationService.insertPasscode(passcode)
+
     saveStylist = stylistDao.insert(stylist)
+
     sendSMS = smsService.sendMessage(stylist.mobile, passcode.code)
 
     _ <- Future.sequence(List(savePasscode, saveStylist, sendSMS))

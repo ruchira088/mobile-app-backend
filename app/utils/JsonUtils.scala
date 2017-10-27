@@ -3,6 +3,8 @@ package utils
 import org.joda.time.DateTime
 import play.api.libs.json._
 import ScalaUtils._
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.JsonMappingException
 import exceptions.JsonDeserializationException
 import play.api.mvc.Request
 
@@ -11,6 +13,12 @@ import scala.util.{Failure, Success, Try}
 
 object JsonUtils
 {
+  def parse(jsonString: String): Option[JsValue] = try {
+    Some(Json.parse(jsonString))
+  } catch {
+    case _ : JsonParseException | _ : JsonMappingException => None
+  }
+
   def deserialize[A](implicit request: Request[JsValue], reads: Reads[A]): Try[A] = deserialize[A](request.body)
 
   def deserialize[A](jsValue: JsValue)(implicit reads: Reads[A]): Try[A] =

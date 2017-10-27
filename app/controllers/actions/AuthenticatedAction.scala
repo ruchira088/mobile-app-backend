@@ -3,7 +3,7 @@ package controllers.actions
 import javax.inject.Inject
 
 import controllers.requests.types.AuthenticatedRequest
-import exceptions.{AuthorizationHeaderNotFoundException, InvalidTokenException}
+import exceptions.{AuthorizationHeaderNotFoundException, InvalidBearerTokenException}
 import play.api.mvc._
 import play.mvc.Http.HeaderNames
 import services.AuthenticationService
@@ -39,7 +39,7 @@ object AuthenticatedAction
 
   def extractToken(authorizationHeader: String): Try[AuthorizationToken] = authorizationHeader match {
     case tokenRegex(authorizationToken) => Success(authorizationToken.trim)
-    case _ => Failure(InvalidTokenException)
+    case _ => Failure(InvalidBearerTokenException)
   }
 
   def getBearerToken[_](request: Request[_]): Try[AuthorizationToken] = for {
