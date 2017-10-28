@@ -2,19 +2,20 @@ package services.sms
 
 import javax.inject.{Inject, Singleton}
 
+import akka.actor.ActorSystem
 import com.amazonaws.services.sns.model.{MessageAttributeValue, PublishRequest}
 import com.amazonaws.services.sns.{AmazonSNSAsync, AmazonSNSAsyncClientBuilder}
-import constants.{ConfigValues, EnvVariables}
 import constants.aws.SnsConstants
+import constants.{ConfigValues, EnvVariables}
 import services.types.PhoneNumber
 import utils.ConfigUtils._
 import utils.ScalaUtils
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.collection.JavaConverters._
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AwsSmsService @Inject()(implicit executionContext: ExecutionContext) extends SmsService
+class AwsSmsService @Inject()(implicit executionContext: ExecutionContext, actorSystem: ActorSystem) extends SmsService
 {
   val asyncSnsClient: AmazonSNSAsync = AmazonSNSAsyncClientBuilder.defaultClient()
 

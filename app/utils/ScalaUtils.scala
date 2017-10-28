@@ -2,10 +2,12 @@ package utils
 
 import java.util.concurrent
 
+import akka.actor.ActorSystem
 import exceptions.EmptyOptionException
 import play.api.libs.json.{JsError, JsResult, JsSuccess}
 
-import scala.concurrent.{ExecutionContext, Future, blocking}
+import scala.concurrent.{Future, Promise}
+import scala.concurrent.duration._
 import scala.util.control.NonFatal
 import scala.util.{Failure, Success, Try}
 
@@ -31,14 +33,27 @@ object ScalaUtils
       case NonFatal(throwable) => Failure(throwable)
     }
 
-  // TODO Implement the more efficient Java Future to Scala Future conversion
+//  def simpleConversionToScalaFuture[A]
+//    (javaFuture: concurrent.Future[A])(implicit executionContext: ExecutionContext): Future[A] =
+//      Future {
+//        blocking {
+//          javaFuture.get()
+//        }
+//      }
+
   def simpleConversionToScalaFuture[A]
-    (javaFuture: concurrent.Future[A])(implicit executionContext: ExecutionContext): Future[A] =
-      Future {
-        blocking {
-          javaFuture.get()
-        }
+  (javaFuture: concurrent.Future[A])(implicit actorSystem: ActorSystem): Future[A] =
+    if (javaFuture.isDone)
+      Future.successful(javaFuture.get())
+    else {
+      val promise = Promise[A]
+
+      actorSystem.scheduler.scheduleOnce(100 milliseconds) {
+        promise.completeWith(simpleConversionToScalaFuture(javaFuture))
       }
+
+      promise.future
+    }
 
   def predicate(boolean: Boolean, exception: => Exception, onFail: => Unit = {}): Future[Unit] =
     if (boolean)
