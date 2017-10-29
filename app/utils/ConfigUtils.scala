@@ -21,8 +21,6 @@ object ConfigUtils
   def getEnvValueOrDefault(name: String, defaultValue: => String): String =
     getEnvValue(name).getOrElse(defaultValue)
 
-
-
   def getApplicationInfo()(implicit executionContext: ExecutionContext): Future[List[KeyValuePair[String]]] =
   {
     val KEY_VALUE_SEPARATOR = ":="
