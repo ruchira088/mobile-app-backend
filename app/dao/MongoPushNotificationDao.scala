@@ -2,7 +2,7 @@ package dao
 
 import javax.inject.{Inject, Singleton}
 
-import models.PushNotification
+import models.db.PushNotification
 import play.api.libs.json.OFormat
 import play.modules.reactivemongo.ReactiveMongoApi
 import services.MongoCollection

@@ -3,7 +3,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import controllers.actions.ActionType
-import models.Stylist
+import models.db.Stylist
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -1,6 +1,6 @@
 package dao
 
-import models.Stylist
+import models.db.Stylist
 import services.types.PhoneNumber
 import utils.FutureO
 

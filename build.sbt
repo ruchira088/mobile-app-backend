@@ -1,4 +1,4 @@
-name := """mobile-app-backend"""
+name := "mobile-app-backend"
 organization := "com.ruchij"
 
 version := "0.0.1"

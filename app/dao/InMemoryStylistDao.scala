@@ -1,7 +1,7 @@
 package dao
 import javax.inject.{Inject, Singleton}
 
-import models.Stylist
+import models.db.Stylist
 import org.joda.time.DateTime
 import services.types.PhoneNumber
 import utils.FutureO

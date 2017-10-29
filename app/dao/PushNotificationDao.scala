@@ -1,6 +1,6 @@
 package dao
 
-import models.PushNotification
+import models.db.PushNotification
 
 import scala.concurrent.Future
 

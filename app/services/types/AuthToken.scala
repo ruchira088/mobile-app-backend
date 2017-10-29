@@ -1,6 +1,6 @@
 package services.types
 
-import models.Stylist
+import models.db.Stylist
 import org.joda.time.DateTime
 import play.api.libs.json.{Json, OFormat}
 import utils.JsonUtils._

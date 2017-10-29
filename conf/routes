@@ -3,11 +3,10 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
-# An example controller showing a sample home page
-GET     /                               controllers.HomeController.index
+GET     /info                           controllers.InfoController.index()
 
-POST    /user/register                  controllers.UserController.register
-POST    /user/login                     controllers.UserController.login
+POST    /user/register                  controllers.UserController.register()
+POST    /user/login                     controllers.UserController.login()
 POST    /push-notifications/:stylistAirtableId/register    controllers.UserController.registerForPushNotifications(stylistAirtableId)
 
 GET     /bookings/:stylistAirtableId    controllers.UserController.bookings(stylistAirtableId)

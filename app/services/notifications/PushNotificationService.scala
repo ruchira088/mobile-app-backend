@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import constants.EnvVariables
 import controllers.requests.bodies.RegisterDeviceToken
-import models.Stylist
+import models.db.Stylist
 import play.api.libs.ws.WSClient
 import services.notifications.model.AccountRequest
 import utils.ConfigUtils

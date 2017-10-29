@@ -5,8 +5,8 @@ import javax.inject.{Inject, Singleton}
 import constants.{ConfigValues, EnvVariables}
 import controllers.requests.bodies.RegisterDeviceToken
 import dao.{PushNotificationDao, StylistDao}
-import exceptions.{UnableToSetValueInKeyStoreException, UndefinedEnvValueException}
-import models.{PushNotification, Stylist}
+import exceptions.UndefinedEnvValueException
+import models.db.{PushNotification, Stylist}
 import org.joda.time.DateTime
 import services.airtable.model.AirtableStylist
 import services.notifications.PushNotificationService
